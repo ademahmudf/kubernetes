@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: frontend
+spec:
+  host: frontend
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: backend-svc
+spec:
+  host: backend-svc
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2 #dipanggil di virtual service
+    labels:
+      version: v2 #sesuai tag pada deployment
+---

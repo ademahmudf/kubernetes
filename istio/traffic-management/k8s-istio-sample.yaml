@@ -1,0 +1,107 @@
+#Deployment frontend 1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+      version: v1 
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v1
+    spec:
+      containers:
+      - name: nginx-lb
+        image: ademahmudf/nginx-lb
+        ports:
+        - containerPort: 80
+---      
+#Deployment backend 1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+      version: v1 
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v1
+    spec:
+      containers:
+      - name: php-app1
+        image: ademahmudf/php-app1
+        ports:
+        - containerPort: 80
+---
+#Deployment backend 2
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment-v2
+  labels:
+    app: backend
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v2
+    spec:
+      containers:
+      - name: php-app2
+        image: ademahmudf/php-app2
+        ports:
+        - containerPort: 80
+---
+#Service frontend
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+    service: frontend
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: frontend
+---
+#Service backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+  labels:
+    app: backend
+    service: backend-svc
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: backend
