@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: {{ ingress_name }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.org/client-max-body-size: "0"
+    nginx.org/proxy-connect-timeout: "0"
+    nginx.org/proxy-read-timeout: "0"
+spec:
+  rules:
+  - host: {{ url }}
+    http:
+      paths:
+       - path: / 
+         backend : 
+            serviceName: {{ service_name }}
+            servicePort: 80

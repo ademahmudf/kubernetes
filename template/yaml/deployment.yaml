@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ deployment_name }}
+  labels:
+    app: {{ app_name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ app_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ app_name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ secret_registry_name }}
+      containers:
+      - name: {{ app_name }}
+        image: {{ app_image }}
+        volumeMounts:
+        - mountPath: {{ container_path_dir }}
+          name: logs
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
+        env:
+        - name: DB_HOST
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ configmap_name }}
+              key: db_host
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ configmap_name }}
+              key: db_port
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ db_secret_name }}
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ db_secret_name }}
+              key: db_password
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healtcheck
+            port: 80
+            scheme: HTTP
+          # initialDelayedSeconds: 3
+          # periodSeconds: 3
+          # successThreshold: 1
+          timeoutSeconds: 1
+      volumes:
+      - name: logs
+        hostPath:
+          path: {{ host_path_dir }}
+          type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ service_name }}
+spec:
+  selector:
+    app: {{ app_name }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: http
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      name: https
