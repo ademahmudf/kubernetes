@@ -1,0 +1,43 @@
+#Deployment grpc-sample 1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-sample
+  labels:
+    app: grpc-sample
+    version: v1
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpc-sample
+  template:
+    metadata:
+      labels:
+        app: grpc-sample
+        version: v1
+    spec:
+      containers:
+      - name: grpc-sample
+        image: quay.io/kubernetes-ingress-controller/grpc-fortune-teller:0.1
+        ports:
+        - containerPort: 50051
+          name: grpc
+---
+#Service grpc-sample
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-sample
+  labels:
+    app: grpc-sample
+    service: grpc-sample
+spec:
+  ports:
+  - port: 50051
+    targetPort: 50051
+    name: grpc #important
+  selector:
+    app: grpc-sample
+---

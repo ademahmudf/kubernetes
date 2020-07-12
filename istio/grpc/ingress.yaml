@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: istio
+  name: ingress-grpc
+spec:
+  rules:
+  - host: grpc.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grpc-svc
+          servicePort: 50051
+      
+  tls:
+  - secretName: grpc.local
+    hosts:
+      - grpc.local
