@@ -1,0 +1,25 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{cron-job-name}}
+  labels:
+    app: {{label-value}}
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      selector:
+        matchLabels:
+            app: {{pod-label}}
+      template:
+        metadata:
+          name: {{pod-name}}
+          labels:
+            app: {{pod-label}}
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: {{container-name}}
+              image: {{image-name}}
+              ports:
+                - containerPort: 80

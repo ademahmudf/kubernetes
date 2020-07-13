@@ -4,6 +4,8 @@ metadata:
   name: {{ deployment_name }}
   labels:
     app: {{ app_name }}
+  annotations:
+    description: annotation description . . . .
 spec:
   replicas: 1
   selector:
@@ -13,6 +15,8 @@ spec:
     metadata:
       labels:
         app: {{ app_name }}
+      annotations:
+        description: annotation description . . . .
     spec:
       imagePullSecrets:
         - name: {{ secret_registry_name }}
@@ -33,51 +37,34 @@ spec:
             configMapKeyRef:
               name: {{ configmap_name }}
               key: db_host
-        - name: DB_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: {{ configmap_name }}
-              key: db_port
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: {{ db_secret_name }}
-              key: db_user
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ db_secret_name }}
               key: db_password
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: 3 #berapa kali fail sampai pod dinyatakan unhealty
           httpGet:
             path: /healtcheck
             port: 80
             scheme: HTTP
-          # initialDelayedSeconds: 3
-          # periodSeconds: 3
-          # successThreshold: 1
-          timeoutSeconds: 1
+            initialDelayedSeconds: 3 #initial detik saat akan melakukan pengecekan
+            periodSeconds: 3 
+            successThreshold: 1 #berapa kali success sampai pod dinyatakan ready
+          timeoutSeconds: 1 #waktu timeout untuk response
+          resources:
+            requests:
+              # milli core
+              cpu: 1000m
+              # mebibyte
+              memory: 250Mi
+            limits:
+              # milli core
+              cpu: 2000m
+              # mebibyte
+              memory: 500Mi
       volumes:
       - name: logs
         hostPath:
           path: {{ host_path_dir }}
           type: Directory
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ service_name }}
-spec:
-  selector:
-    app: {{ app_name }}
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-      name: http
-    - protocol: TCP
-      port: 443
-      targetPort: 443
-      name: https

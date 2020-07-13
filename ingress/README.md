@@ -8,6 +8,8 @@ Ingress nginx [official github page](https://github.com/kubernetes/ingress-nginx
 
 [ingress nginx annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/)
 
+[ingress nginx sample configuration](https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples)
+
 [istio ingress docs](https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/)
 
 ## Ingress `resources`

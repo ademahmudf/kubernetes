@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{job-name}}
+  labels:
+    apps: {{apps_name}}
+  annotations:
+    descriptions: description bla bla bla
+spec:
+  completions: 5 #dijalankan sebanyak 5 kali
+  parallelism: 1 # dijalankan 1 kali setiap container run
+  selector:
+    matchLabels:
+        apps: {{apps_name}}
+  template:
+    metadata:
+      name: {{pod-name}}
+      labels:
+        apps: {{apps_name}}
+    spec:
+      restartPolicy: Never #important
+      containers:
+        - name: {{container-name}}
+          image: {{image-name}}
+          ports:
+            - containerPort: 80
